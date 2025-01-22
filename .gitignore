@@ -4,4 +4,3 @@ composer.lock
 /.php*
 /vendor/
 .DS_Store
-/.env.local
