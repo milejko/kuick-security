@@ -1,0 +1,7 @@
+composer.lock
+/clover.xml
+/.idea
+/.php*
+/vendor/
+.DS_Store
+/.env.local

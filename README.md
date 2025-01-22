@@ -9,80 +9,12 @@
 ## Security package implementing PSR-15 middleware
 
 ### Key features
-1. PSR-15(https://www.php-fig.org/psr/psr-15/) middleware implementation
-2. Support for Guards easily registered to the Guardhouse service
-3. Listener prioritization
-4. Support for wildcard listeners (ie. *, Prefix*)
+1. PSR-15(https://www.php-fig.org/psr/psr-15/) security middleware implementation
+2. Support for flexible Guards (any callable)
+3. Guardhouse service with methods to register Guards (regex path support)
 
-### Examples
-1. Registering listeners to the listener provider
-```
-<?php
+### Usage
+@TODO: create some instructions 
 
-use Kuick\Event\EventDispatcher;
-use Kuick\Event\ListenerProvider;
-
-$provider = new ListenerProvider();
-$provider->registerListener(
-    'some class name or pattern',
-    function () {
-        //handle the event
-    }
-);
-
-$dispatcher = new EventDispatcher($provider);
-// $dispatcher->dispatch(new SomeEvent());
-```
-2. Listener prioritization (using stdClass as an event)
-```
-<?php
-
-use stdClass;
-use Kuick\Event\EventDispatcher;
-use Kuick\Event\ListenerPriority;
-use Kuick\Event\ListenerProvider;
-
-$provider = new ListenerProvider();
-$provider->registerListener(
-    stdClass::class,
-    function (stdClass $event) {
-        //handle the event
-    },
-    ListenerPriority::HIGH
-);
-$provider->registerListener(
-    stdClass::class,
-    function (stdClass $event) {
-        //handle the event
-    },
-    ListenerPriority::LOW
-);
-$dispatcher = new EventDispatcher($provider);
-// it should handle the event with high priority listener first
-$dispatcher->dispatch(new stdClass());
-```
-3. Registering wildcard listeners (using stdClass as an event)
-```
-<?php
-
-use stdClass;
-use Kuick\Event\EventDispatcher;
-use Kuick\Event\ListenerProvider;
-
-$provider = new ListenerProvider();
-$provider->registerListener(
-    '*',
-    function (object $event) {
-        //handle the event
-    }
-);
-$provider->registerListener(
-    'std*',
-    function (object $event) {
-        //handle the event
-    }
-);
-$dispatcher = new EventDispatcher($provider);
-// it should match both listeners and run them sequentialy
-$dispatcher->dispatch(new stdClass());
-```
+### License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
