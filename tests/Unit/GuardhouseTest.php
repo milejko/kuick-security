@@ -30,12 +30,12 @@ class GuardhouseTest extends TestCase
 
     public function testAddingAndMatchingMultipleGuards(): void
     {
-        $controllerMock = function () {
+        $guardMock = function () {
         };
         $guardhouse = (new Guardhouse(new NullLogger()))
-            ->addGuard('/sample', $controllerMock, ['GET'])
-            ->addGuard('/sample', $controllerMock, ['POST'])
-            ->addGuard('/test', $controllerMock, ['GET', 'POST']);
+            ->addGuard('/sample', $guardMock, ['GET'])
+            ->addGuard('/sample', $guardMock, ['POST'])
+            ->addGuard('/test', $guardMock, ['GET', 'POST']);
 
         $executableGuard = $guardhouse->matchGuards(new ServerRequest('POST', '/test'))[0];
         $this->assertInstanceOf(ExecutableGuard::class, $executableGuard);

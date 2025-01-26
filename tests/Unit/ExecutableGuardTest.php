@@ -2,10 +2,11 @@
 
 namespace Tests\Kuick\Unit\Security;
 
-use Kuick\Http\BadRequestException;
+use Kuick\Http\Message\JsonResponse;
 use PHPUnit\Framework\TestCase;
 use Kuick\Security\ExecutableGuard;
 use Nyholm\Psr7\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -25,18 +26,16 @@ class ExecutableGuardTest extends TestCase
 
     public function testIfFailingGuardRaisesException(): void
     {
-        $failingGuardMock = function (ServerRequestInterface $request): void {
+        $failingGuardMock = function (ServerRequestInterface $request): ?ResponseInterface {
             if ($request->getQueryParams()['some-param'] !== 'some-value') {
-                return;
+                return null;
             }
-            throw new BadRequestException($request->getBody()->getContents());
+            return new JsonResponse([], JsonResponse::HTTP_BAD_REQUEST);
         };
         $failedGuard = (new ExecutableGuard('/test', $failingGuardMock, ['GET']))
             ->setParams(['some-param' => 'some-value']);
 
-        $this->expectException(BadRequestException::class);
-
-        $this->expectExceptionMessage('ooops');
-        $failedGuard->execute(new ServerRequest('GET', '/test', [], 'ooops'));
+        $response = $failedGuard->execute(new ServerRequest('GET', '/test', [], 'ooops'));
+        $this->assertEquals(400, $response->getStatusCode());
     }
 }

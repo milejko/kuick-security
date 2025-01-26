@@ -11,6 +11,7 @@
 namespace Kuick\Security;
 
 use Kuick\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -40,9 +41,11 @@ class ExecutableGuard
         return $this;
     }
 
-    public function execute(ServerRequestInterface $request): void
+    public function execute(ServerRequestInterface $request): ?ResponseInterface
     {
         // adding guard parameters to the request query params
-        $this->guard->__invoke($request->withQueryParams(array_merge($this->params, $request->getQueryParams())));
+        return $this->guard->__invoke(
+            $request->withQueryParams(array_merge($this->params, $request->getQueryParams()))
+        );
     }
 }
