@@ -15,7 +15,7 @@
     },
     "require": {
         "php": ">=8.2.0",
-        "kuick/http": "^1.0",
+        "kuick/http": "^1.0|dev-main",
         "psr/log": "^3.0"
     },
     "scripts": {
