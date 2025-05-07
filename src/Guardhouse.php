@@ -26,7 +26,7 @@ class Guardhouse
 
     public function addGuard(
         string $path,
-        callable $guard,
+        object $guard,
         array $methods = [
             RequestInterface::METHOD_GET,
             RequestInterface::METHOD_POST,
@@ -52,7 +52,7 @@ class Guardhouse
             $requestPath = $request->getUri()->getPath() == '/' ? '/' : rtrim($request->getUri()->getPath(), '/');
             //adding HEAD if GET is present
             $guardMethods = in_array(RequestInterface::METHOD_GET, $guard->methods) ? array_merge([RequestInterface::METHOD_HEAD, $guard->methods], $guard->methods) : $guard->methods;
-            $this->logger->debug('Trying guard: ' . $guard->path);
+            $this->logger->debug("Trying guard: $guard->path");
             //matching path
             $pathParams = [];
             $matchResult = preg_match(sprintf(self::MATCH_PATTERN, $guard->path), $requestPath, $pathParams);
@@ -61,7 +61,7 @@ class Guardhouse
             }
             //matching method
             if (in_array($requestMethod, $guardMethods)) {
-                $this->logger->debug('Matched guard: ' . $guard->path . ' ' . $guard->path);
+                $this->logger->debug("Matched guard: $guard->path $guard->path");
                 $matchedGuards[] = $guard->setParams($pathParams);
             }
         }

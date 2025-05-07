@@ -41,10 +41,15 @@ class ExecutableGuard
         return $this;
     }
 
-    public function execute(ServerRequestInterface $request): ?ResponseInterface
+    /**
+     * Executes the guard
+     * throws HttpException if the guard fails
+     * @throws \Kuick\Http\HttpException
+     */
+    public function execute(ServerRequestInterface $request): void
     {
         // adding guard parameters to the request query params
-        return $this->guard->__invoke(
+        $this->guard->__invoke(
             $request->withQueryParams(array_merge($this->params, $request->getQueryParams()))
         );
     }

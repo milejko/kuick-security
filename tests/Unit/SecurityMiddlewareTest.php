@@ -2,6 +2,7 @@
 
 namespace Tests\Kuick\Unit\Security;
 
+use Kuick\Http\HttpException;
 use Kuick\Http\Message\Response;
 use Kuick\Security\Guardhouse;
 use Kuick\Security\SecurityMiddleware;
@@ -32,7 +33,7 @@ class SecurityMiddlewareTest extends TestCase
             if ('PUT' !== $request->getMethod()) {
                 return null;
             }
-            return new Response(Response::HTTP_METHOD_NOT_ALLOWED, [], $request->getBody()->getContents());
+            throw new HttpException(Response::HTTP_METHOD_NOT_ALLOWED);
         };
         $guardhouse = (new Guardhouse(new NullLogger()))
             ->addGuard('/sample', $putBlockingGuardMock, ['GET'])
@@ -45,8 +46,8 @@ class SecurityMiddlewareTest extends TestCase
         $securityMiddleware->process(new ServerRequest('POST', '/sample'), new MockRequestHandler());
         $securityMiddleware->process(new ServerRequest('PUT', '/sample'), new MockRequestHandler());
 
-        $response = $securityMiddleware->process(new ServerRequest('PUT', '/test', [], 'oops'), new MockRequestHandler());
-        $this->assertEquals(405, $response->getStatusCode());
-        $this->assertEquals('oops', $response->getBody()->getContents());
+        $this->expectException(HttpException::class);
+        $this->expectExceptionCode(Response::HTTP_METHOD_NOT_ALLOWED);
+        $securityMiddleware->process(new ServerRequest('PUT', '/test', [], 'oops'), new MockRequestHandler());
     }
 }

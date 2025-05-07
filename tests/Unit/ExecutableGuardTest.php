@@ -2,6 +2,7 @@
 
 namespace Tests\Kuick\Unit\Security;
 
+use Kuick\Http\HttpException;
 use Kuick\Http\Message\JsonResponse;
 use PHPUnit\Framework\TestCase;
 use Kuick\Security\ExecutableGuard;
@@ -30,12 +31,13 @@ class ExecutableGuardTest extends TestCase
             if ($request->getQueryParams()['some-param'] !== 'some-value') {
                 return null;
             }
-            return new JsonResponse([], JsonResponse::HTTP_BAD_REQUEST);
+            throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, 'Bad request');
         };
         $failedGuard = (new ExecutableGuard('/test', $failingGuardMock, ['GET']))
             ->setParams(['some-param' => 'some-value']);
 
-        $response = $failedGuard->execute(new ServerRequest('GET', '/test', [], 'ooops'));
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Bad request');
+        $failedGuard->execute(new ServerRequest('GET', '/test', [], 'ooops'));
     }
 }

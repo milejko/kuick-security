@@ -24,30 +24,20 @@ class SecurityMiddleware implements MiddlewareInterface
     ) {
     }
 
+    /**
+     * Process the request and return a response.
+     * Throws HttpException if one or more guards fail
+     * @throws \Kuick\Http\HttpException
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $this->logger->debug('Executing guards for path: ' . $request->getUri()->getPath());
-        $guardsResponse = $this->executeGuards($request);
-        // return guards response if it exists
-        if (null !== $guardsResponse) {
-            return $guardsResponse;
-        }
-        // otherwise, continue with the next middleware
-        return $handler->handle($request);
-    }
-
-    private function executeGuards(ServerRequestInterface $request): ?ResponseInterface
-    {
         // execute guards
         foreach ($this->guardhouse->matchGuards($request) as $executableGuard) {
-            $guardClass = get_class($executableGuard->guard);
-            $guardResponse = $executableGuard->execute($request);
-            // if guard generates a response, return it
-            if (null !== $guardResponse) {
-                return $guardResponse;
-            }
-            $this->logger->info('Guard passed: ' . $guardClass);
+            $executableGuard->execute($request);
+            $this->logger->info('Guard passed: ' . get_class($executableGuard->guard));
         }
-        return null;
+        // if no exception is thrown, continue to the next middleware
+        return $handler->handle($request);
     }
 }
