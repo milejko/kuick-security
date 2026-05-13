@@ -4,25 +4,24 @@ namespace Tests\Kuick\Unit\Security;
 
 use Kuick\Http\HttpException;
 use Kuick\Http\Message\JsonResponse;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Kuick\Security\ExecutableGuard;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @covers \Kuick\Security\ExecutableGuard
- */
+#[CoversClass(\Kuick\Security\ExecutableGuard::class)]
 class ExecutableGuardTest extends TestCase
 {
     public function testIfEmptyGuardPassesSilently(): void
     {
+        $this->expectNotToPerformAssertions();
         $okGuardMock = function (): void {
         };
         //should do nothing (no exception should be raised)
         $executableGuard = new ExecutableGuard('/test', $okGuardMock, ['GET']);
         $executableGuard->execute(new ServerRequest('GET', '/test', []));
-        $this->assertTrue(true);
     }
 
     public function testIfFailingGuardRaisesException(): void

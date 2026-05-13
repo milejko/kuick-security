@@ -5,12 +5,11 @@ namespace Tests\Kuick\Unit\Security;
 use Kuick\Security\Guardhouse;
 use Kuick\Security\ExecutableGuard;
 use Nyholm\Psr7\ServerRequest;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-/**
- * @covers \Kuick\Security\Guardhouse
- */
+#[CoversClass(\Kuick\Security\Guardhouse::class)]
 class GuardhouseTest extends TestCase
 {
     public function testAddingAndMatchingASingleGuard(): void

@@ -42,6 +42,6 @@
         }
     },
     "require-dev": {
-        "kuick/qa-toolkit": "^1.0"
+        "kuick/qa-toolkit": "^2.0"
     }
 }

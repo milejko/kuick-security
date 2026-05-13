@@ -18,12 +18,17 @@ class Guardhouse
 {
     private const MATCH_PATTERN = '#^%s$#';
 
+    /** @var array<ExecutableGuard> */
     private array $guards = [];
 
     public function __construct(private LoggerInterface $logger)
     {
     }
 
+    /**
+     * @phpstan-param (callable(ServerRequestInterface): (void|null))&object $guard
+     * @param array<string> $methods
+     */
     public function addGuard(
         string $path,
         object $guard,
@@ -40,6 +45,9 @@ class Guardhouse
         return $this;
     }
 
+    /**
+     * @return array<ExecutableGuard>
+     */
     public function matchGuards(ServerRequestInterface $request): array
     {
         $requestMethod = $request->getMethod();
@@ -51,7 +59,7 @@ class Guardhouse
             //trim right slash
             $requestPath = $request->getUri()->getPath() == '/' ? '/' : rtrim($request->getUri()->getPath(), '/');
             //adding HEAD if GET is present
-            $guardMethods = in_array(RequestInterface::METHOD_GET, $guard->methods) ? array_merge([RequestInterface::METHOD_HEAD, $guard->methods], $guard->methods) : $guard->methods;
+            $guardMethods = in_array(RequestInterface::METHOD_GET, $guard->methods) ? array_merge([RequestInterface::METHOD_HEAD], $guard->methods) : $guard->methods;
             $this->logger->debug("Trying guard: $guard->path");
             //matching path
             $pathParams = [];

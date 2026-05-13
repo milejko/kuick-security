@@ -8,14 +8,13 @@ use Kuick\Security\Guardhouse;
 use Kuick\Security\SecurityMiddleware;
 use Tests\Kuick\Security\Unit\Mocks\MockRequestHandler;
 use Nyholm\Psr7\ServerRequest;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\NullLogger;
 
-/**
- * @covers \Kuick\Security\SecurityMiddleware
- */
+#[CoversClass(\Kuick\Security\SecurityMiddleware::class)]
 class SecurityMiddlewareTest extends TestCase
 {
     public function testIfEmptyGuardhousesFreelyPassesTheRequest(): void

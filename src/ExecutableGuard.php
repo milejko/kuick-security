@@ -19,11 +19,19 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ExecutableGuard
 {
+    /** @var array<string, string> */
     private array $params = [];
 
+    /** @phpstan-var (callable(ServerRequestInterface): (void|null))&object */
+    public object $guard;
+
+    /**
+     * @phpstan-param (callable(ServerRequestInterface): (void|null))&object $guard
+     * @param array<string> $methods
+     */
     public function __construct(
         public readonly string $path,
-        public object $guard,
+        object $guard,
         public readonly array $methods = [
             RequestInterface::METHOD_GET,
             RequestInterface::METHOD_OPTIONS,
@@ -33,8 +41,12 @@ class ExecutableGuard
             RequestInterface::METHOD_DELETE,
         ],
     ) {
+        $this->guard = $guard;
     }
 
+    /**
+     * @param array<string, string> $params
+     */
     public function setParams(array $params = []): self
     {
         $this->params = $params;
@@ -48,9 +60,6 @@ class ExecutableGuard
      */
     public function execute(ServerRequestInterface $request): void
     {
-        // adding guard parameters to the request query params
-        $this->guard->__invoke(
-            $request->withQueryParams(array_merge($this->params, $request->getQueryParams()))
-        );
+        ($this->guard)($request->withQueryParams(array_merge($this->params, $request->getQueryParams())));
     }
 }
